@@ -1,0 +1,1 @@
+sample for installation verification only

@@ -1,0 +1,67 @@
+#!/bin/bash
+#===============================================================================
+# See if this instance appears to have everything installed as expected.
+# This is for provision-node-dev-ubuntu.
+#
+# Version: 1.0.0
+# Date: 25 Feb 2015
+# Author: Dave Nicolette
+#===============================================================================
+
+echo
+echo '============================================================='
+echo 'Verifying configuration of Node development environment...'
+
+declare -i errors=0
+
+# Ubuntu packages
+
+declare -a pkg
+pkg[${#pkg[@]}]='git'
+pkg[${#pkg[@]}]='build-essential'
+pkg[${#pkg[@]}]="linux-headers-$(uname -r)"
+pkg[${#pkg[@]}]='dkms'
+pkg[${#pkg[@]}]='python-software-properties'
+pkg[${#pkg[@]}]='sublime-text-installer'
+pkg[${#pkg[@]}]='npm'
+
+for name in "${pkg[@]}"
+do
+  if [[ -n "$(aptitude search ${name})" ]]; then 
+      echo "package ${name} is installed"
+  else
+      echo "package ${name} was expected but is not installed - ERROR"
+      errors="${errors}+1"
+  fi 
+done
+
+# npm packages
+
+declare -a npkg
+npkg[${#npkg[@]}]='iojs'
+npkg[${#npkg[@]}]='grunt'
+npkg[${#npkg[@]}]='grunt-cli'
+npkg[${#npkg[@]}]='grunt-init'
+npkg[${#npkg[@]}]='bower'
+npkg[${#npkg[@]}]='yo'
+npkg[${#npkg[@]}]='jasmine-node'
+npkg[${#npkg[@]}]='grunt-jasmine-node-coverage'
+
+for name in "${npkg[@]}"
+do
+  if [[ -n "$(npm ls | grep ${name})" ]]; then 
+      echo "npm package ${name} is installed"
+  else
+      echo "npm package ${name} was expected but is not installed - ERROR"
+      errors="${errors}+1"
+  fi 
+done
+
+test "${errors}" -eq 0 && echo "...configuration is as expected." || echo "...${errors} expected package(s) or application(s) not found! Configuration may not function as desired." 
+
+echo
+echo Running sample grunt build to verify configuration...
+cd sample
+grunt
+
+
