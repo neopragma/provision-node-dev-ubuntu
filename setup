@@ -36,13 +36,26 @@ npm install yo
 npm install jasmine-node
 npm install grunt-jasmine-node-coverage
 
+# Set the Firefox bookmarks
+
+pushd "$HOME/.mozilla/firefox"
+PROFILEDIR=$(grep -n Path profiles.ini | cut -d '=' -f 2)
+cd $PROFILEDIR
+cp places.sqlite places-sqlite.orig
+echo
+echo '============================================================='
+echo 'Setting Firefox bookmarks...'
+echo "Copying places.sqlite from $RESOURCES to $(pwd)"
+cp "$INSTALL_DIR/places.sqlite" .
+popd
+
 echo
 echo '============================================================='
 echo 'Setting the desktop background image...'
 
 mkdir -p "$HOME/.backgrounds"
-cp -f nodejs.png "$HOME/.backgrounds/."
-gsettings set org.gnome.desktop.background picture-uri file:///home/neopragma/.backgrounds/nodejs.png
+cp -f "$INSTALL_DIR/nodejs-background.png" "$HOME/.backgrounds/."
+gsettings set org.gnome.desktop.background picture-uri file:///home/nodejsdev/.backgrounds/nodejs-background.png
 
 echo
 echo '============================================================='
